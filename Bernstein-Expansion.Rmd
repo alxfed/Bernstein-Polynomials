@@ -1,0 +1,52 @@
+---
+title: "Bernstein Expansion Notebook"
+output: html_notebook
+---
+
+Let's try the Bernstein Expansion formula.
+
+Bernstein expansion of an arbitraty function is:
+
+B(n, f) at x is equal to Sum(from nu=0 to nu=n, f(nu/n) * Bern(nu,n,x)
+
+The nature of this expression is really interesting. 
+  It's a functional.
+  The support is [0,1], also the expanded part of the function f
+  lies on the [0,1] segment (because for n < nu < 0 Bern is 0)
+
+Also, the formula 'discretizes' a continuous function into 'points' f(nu/n) the number of which is limited by the number of the polynomials in the basis. The image of the function is the function itself and this is the property of the Bernstein basis polynomials which are based on this 'limit' property of the Binomial distribution.
+
+Let's define an expression as a function
+
+```{r}
+Bernstein <- function(n, f, x, sc = 1) {
+
+# n = number of polynomials in the basis
+# f - name of the function without quotes
+# x - vector of x
+# sc - scale for the value of the argument for f, default - 1.0
+  
+  b <- 0     ##initialize
+  
+  for(nu in 0:n) {
+    b <- b + f(sc*nu/n) * dbinom(nu, n, x, log = FALSE)
+  }
+  return(b)  # requires so that it would return a vector
+}
+```
+
+As an example let's expand a whole sin period
+
+```{r}
+x <- seq(0, 1, .01)
+n <- c(200)
+
+B <- Bernstein(n, sin, x, sc=2*pi)
+
+qplot(x, B, color = I("red"), 
+      size = I(1), alpha = I(1/2), geom = c("point", "line"))
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).

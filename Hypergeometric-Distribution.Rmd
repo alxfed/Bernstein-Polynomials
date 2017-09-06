@@ -1,0 +1,118 @@
+---
+title: "Hypergeometric Distribution"
+output: html_notebook
+---
+
+Hypergeometric distribution
+
+k balls 
+# taken without replacement from an urn with
+
+m white balls and
+n black balls 
+# (all in all- m+n)
+
+x or q  (from the interval [0 - k] )
+#is the number of white balls in the sample
+                      
+                   m        n       m+n
+P( x, k, m, n) = (   ) * (     )/ (     )
+                   x       k-x       k
+
+
+```{r}
+require('ggplot2')
+
+m <- 5 ; n <- 5
+k <- 10
+
+x <- c(0:10)
+y <- dhyper(x, m, n, k, log = FALSE)
+
+qplot(x, y, color = I("red"), 
+      size = I(2), alpha = I(1/2), geom = c("point"))
+```
+
+Which is totally logical. We drew ALL the balls, 5 of them are white, 5 - black, the probability of 5 white balls is = 1
+
+
+Let's eliminate the effect of removal by increasing the overall number of balls in the urn but keep the proportion the same
+
+```{r}
+m <- 1000 ; n <- 1000
+k <- 10
+
+y <- dhyper(x, m, n, k, log = FALSE)
+
+qplot(x, y, color = I("green"), 
+      size = I(2), alpha = I(1/2), geom = c("point"))
+```
+
+Exactly the same as the Binomial distribution with size = 10 and p=0.5 .
+
+Now let's dampen the effect of removal gradually
+
+```{r}
+m <- 6 ; n <- 6
+k <- 10
+
+y <- dhyper(x, m, n, k, log = FALSE)
+
+qplot(x, y, color = I("steelblue"), 
+      size = I(2), alpha = I(1/2), geom = c("point"))
+```
+
+only the neighbours of the central point are nonzero
+
+```{r}
+m <- 8 ; n <- 8
+k <- 10
+
+y <- dhyper(x, m, n, k, log = FALSE)
+
+qplot(x, y, color = I("blue"), 
+      size = I(2), alpha = I(1/2), geom = c("point"))
+```
+
+On and on it goes...
+
+```{r}
+m <- 10 ; n <- 10
+k <- 10
+
+y <- dhyper(x, m, n, k, log = FALSE)
+
+qplot(x, y, color = I("green"), 
+      size = I(2), alpha = I(1/2), geom = c("point"))
+```
+
+10 white and 10 black, sample 10 still much sharper than the Binomial with size 10 and p=0.5
+
+Now let's move it to the sides in the case when the effect of removal is still visible
+
+```{r}
+m <- 15 ; n <- 5
+k <- 10
+
+y <- dhyper(x, m, n, k, log = FALSE)
+
+qplot(x, y, color = I("red"), 
+      size = I(2), alpha = I(1/2), geom = c("point"))
+```
+
+```{r}
+m <- 5 ; n <- 15
+k <- 10
+
+y <- dhyper(x, m, n, k, log = FALSE)
+
+qplot(x, y, color = I("magenta"), 
+      size = I(2), alpha = I(1/2), geom = c("point"))
+```
+
+Hypergeometric is just MUCH sharper if the numbers are comparable.
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).

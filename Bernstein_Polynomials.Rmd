@@ -1,33 +1,98 @@
 ---
-title: "Bernstein"
-author: "alxfed"
-date: "November 4, 2016"
-output: html_document
+title: "Bernstein Polynomials"
+output: html_notebook
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-x <- c(1,2,3)
-y <- c(4,5,6)
-plot(x,y)
+The n+1 Bernstein polynomials that comprise a basis 
+are:
+b(nu, n, x) = choose (n, nu) * x^nu * (1-x)^(n-nu)
+
+Bernstein polynomials are a partition of unity.
+
+Sum(from nu=0 to nu=n, b(nu,n,x)) = 1 ; for an arbitraty (!!!) x
+
+this can be used to assess the error of calculations of 
+the polynomials themself.
+
+Bernstein expansion of an arbitraty function is:
+
+B(n, f) at x is equal to Sum(from nu=0 to nu=n, f(nu/n) * b(nu,n,x)
+
+Let's define the function
+
+```{r}
+## Bernstein polynomial Bern(nu, n, x)
+
+# defined for nu <n and 0<x<1 ## add ifelse sometime
+
+Bern <- function (nu, n, x) {
+  f <- choose (n, nu) * x^nu * (1-x)^(n-nu) 
+}
+
+#it's just dbinom(nu, n, x, log = FALSE)
 ```
 
-## R Markdown
+Let's stage the scene and plot the first polynomials, that are well known
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+require('ggplot2')
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+# is a vector of a 101 values between 0 and 1 including the end points
 
-```{r cars}
-summary(cars)
+x <- seq(0,1, .01)
+
+n <- 0; nu <- 0
+y <- Bern(nu,n, x)
+z <- dbinom(nu, n, x, log = FALSE)
+
+qplot(x, y, color = I("red"), 
+      size = I(1), alpha = I(1/2), geom = c("point"))
 ```
 
-## Including Plots
+TRUE. b(0,0,x) is identically equal to 1 (because there is just one polynomial and the partition of unity principle stands)
 
-You can also embed plots, for example:
+For n=1 (order one) the TWO polynomials must be x and 1-x (for the same reason)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+
+n <- 1; nu <- 0  #change to nu = 1 if you want to see the second one
+y <- Bern(nu,n, x)
+
+qplot(x, y, color = I("red"), 
+      size = I(1), alpha = I(1/2), geom = c("point"))
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Order 2 (with THREE polynomials: (1-x)^2 ; 2x(1-x) ; x^2)
+
+```{r}
+n <- 2; nu <- 2 #change to nu = 1,2 if you want to see the second one
+y <- Bern(nu,n, x)
+z <- dbinom(nu, n, x, log = FALSE)
+
+qplot(x, y, color = I("brown"), 
+      size = I(1), alpha = I(1/2), geom = c("point"))
+```
+
+Let' check the precision at the end points
+
+```{r}
+z <- c(Bern(0,2,0), Bern(1,2,0), Bern(2,2,0))
+z
+u <- c(Bern(0,2,1), Bern(1,2,1), Bern(2,2,1))
+u
+```
+
+So far so good.
+
+Now something more elaborate
+
+```{r}
+n <- 10; nu <- 5 # similar to a binomial with size=10 and p=0.5
+y <- Bern(nu,n, x)
+
+qplot(x, y, color = I("blue"), 
+      size = I(1), alpha = I(1/2), geom = c("point", "line"))
+```
+
+Very understandable. We are changing probabilities for the same structure of a discrete relationship.
