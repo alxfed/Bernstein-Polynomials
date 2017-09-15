@@ -62,4 +62,3 @@ y <- dbin(x, size=10, .25)
 
 qplot(x, y, size = I(2), color = I("magenta")) +geom_line(size =1, alpha =.5, color="red")
 ```
-
